@@ -35,5 +35,13 @@ app.get('/info',(request,response)=>{
     `)
 })
 
+app.get('/api/persons/:id',(request,response)=>{
+    const note = notes.find(n=>n.id===Number(request.params.id))
+    if(!note){
+        response.status(404).end()
+    }
+    response.json(note)
+})
+
 const port = 3001
 app.listen(port,()=>console.log(`app running on port ${port}`))
