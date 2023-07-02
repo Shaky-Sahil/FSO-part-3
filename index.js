@@ -1,4 +1,6 @@
 const express = require('express')
+require('dotenv').config()
+const Person = require('./models/PersonDB')
 const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
@@ -38,7 +40,12 @@ let notes = [
 
 
 app.get('/api/persons',(request,response)=>{
-    response.json(notes)
+    Person.find({}).then((res)=>{
+      response.json(res)
+    }).catch((error)=>{
+      console.log(error)
+      response.send("error occurred")
+    })
 })
 
 app.get('/info',(request,response)=>{
