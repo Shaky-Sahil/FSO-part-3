@@ -57,11 +57,14 @@ app.get('/info',(request,response)=>{
 })
 
 app.get('/api/persons/:id',(request,response)=>{
-    const note = notes.find(n=>n.id===Number(request.params.id))
-    if(!note){
-        response.status(404).end()
-    }
-    response.json(note)
+    // const note = notes.find(n=>n.id===Number(request.params.id))
+    // if(!note){
+    //     response.status(404).end()
+    // }
+    // response.json(note)
+    Person.findById(request.params.id).then((person)=>{
+      response.json(person)
+    }).catch((error)=>next(error))
 })
 
 app.delete('/api/persons/:id',(request,response,next)=>{
