@@ -77,19 +77,23 @@ app.post('/api/persons',(request,response)=>{
             error: 'name or number missing' 
           })
     }
-    if(notes.find(n=>n.name===request.body.name)){
-        response.status(400).json({ 
-            error: 'name already exists' 
-          })
-    }
+    // if(notes.find(n=>n.name===request.body.name)){
+    //     response.status(400).json({ 
+    //         error: 'name already exists' 
+    //       })
+    // }
     
-    const newnote = {
-        id:id,
+    const newPerson = new Person({
         name:request.body.name,
         number:request.body.number
-    }
-    notes = notes.concat(newnote)
-    response.json(newnote)
+    })
+    //notes = notes.concat(newnote)
+    newPerson.save().then(()=>{
+      response.json(newPerson)
+    }).catch((error)=>{
+      console.log(error)
+      response.send("error while inserting new person")
+    })
 })
 
 // const port = 3001
