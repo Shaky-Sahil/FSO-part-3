@@ -15,6 +15,8 @@ morgan.token('content', function getContent (req) {
 
 app.use(morgan(':method :url :status :response-time ms :content'))
 
+
+
 let notes = [
     { 
       "id": 1,
@@ -43,8 +45,7 @@ app.get('/api/persons',(request,response)=>{
     Person.find({}).then((res)=>{
       response.json(res)
     }).catch((error)=>{
-      console.log(error)
-      response.send("error occurred")
+      next(error)
     })
 })
 
@@ -63,18 +64,16 @@ app.get('/api/persons/:id',(request,response)=>{
     response.json(note)
 })
 
-app.delete('/api/persons/:id',(request,response)=>{
+app.delete('/api/persons/:id',(request,response,next)=>{
     Person.findByIdAndDelete(request.params.id).then(()=>{
       response.status(204).end()
     }).catch((error)=>{
-      console.log(error);
-      console.log("error while deleting");
-      response.send("cannot delete")
+     next(error)
     })
     
 })
 
-app.post('/api/persons',(request,response)=>{
+app.post('/api/persons',(request,response,next)=>{
     const id = Math.floor(Math.random()*1000)
     if(!request.body.name || !request.body.number){
         response.status(400).json({ 
@@ -95,13 +94,23 @@ app.post('/api/persons',(request,response)=>{
     newPerson.save().then(()=>{
       response.json(newPerson)
     }).catch((error)=>{
-      console.log(error)
-      response.send("error while inserting new person")
+      next(error)
     })
 })
 
 // const port = 3001
 // app.listen(port,()=>console.log(`app running on port ${port}`))
+
+const errorHandler = (error,request,response,next) =>{
+  console.error(error.message)
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
