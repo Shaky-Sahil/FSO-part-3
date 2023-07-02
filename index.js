@@ -98,8 +98,13 @@ app.post('/api/persons',(request,response,next)=>{
     })
 })
 
-// const port = 3001
-// app.listen(port,()=>console.log(`app running on port ${port}`))
+app.put('/api/persons/:id',(request,response,next)=>{
+  console.log(request.body);
+  Person.findByIdAndUpdate(request.params.id,{"number":request.body.number}).then(
+    ()=>response.status(200).end()
+    ).catch((error)=>next(error))
+  
+})
 
 const errorHandler = (error,request,response,next) =>{
   console.error(error.message)
