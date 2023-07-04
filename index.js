@@ -83,27 +83,21 @@ app.post('/api/persons',(request,response,next)=>{
             error: 'name or number missing' 
           })
     }
-    // if(notes.find(n=>n.name===request.body.name)){
-    //     response.status(400).json({ 
-    //         error: 'name already exists' 
-    //       })
-    // }
-    
     const newPerson = new Person({
         name:request.body.name,
         number:request.body.number
     })
-    //notes = notes.concat(newnote)
     newPerson.save().then(()=>{
       response.json(newPerson)
     }).catch((error)=>{
+      console.log("the error body is:",error)
       next(error)
     })
 })
 
 app.put('/api/persons/:id',(request,response,next)=>{
   console.log(request.body);
-  Person.findByIdAndUpdate(request.params.id,{"number":request.body.number}).then(
+  Person.findByIdAndUpdate(request.params.id,{"number":request.body.number}, { runValidators: true }).then(
     ()=>response.status(200).end()
     ).catch((error)=>next(error))
   
